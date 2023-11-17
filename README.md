@@ -55,7 +55,7 @@ The application exposes the following endpoints:
 
 You can access the Swagger UI for API documentation at:
 
-`http://localhost:8080/swagger-ui/`
+`http://localhost:8080/phones/webjars/swagger-ui/index.html`
 
 This UI provides an interactive way to explore and test the API endpoints.
 
