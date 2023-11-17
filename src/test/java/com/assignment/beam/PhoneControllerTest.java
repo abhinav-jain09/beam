@@ -10,26 +10,31 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.reactive.function.server.RouterFunction;
-import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @ExtendWith(MockitoExtension.class)
+
+@WebFluxTest(PhoneController.class)
+
 public class PhoneControllerTest {
 
-    @Mock
+    @MockBean
     private PhoneService phoneService;
-
+    @Autowired
     private WebTestClient webTestClient;
 
     @InjectMocks
@@ -38,8 +43,9 @@ public class PhoneControllerTest {
     @BeforeEach
     public void setUp() {
         sharedPhone = new Phone("Phone1", false, LocalDateTime.now(), "User1");
-        webTestClient = WebTestClient.bindToController(phoneController).build();
+        MockitoAnnotations.openMocks(this);  // Ensure mocks are initialized
     }
+
     private Phone sharedPhone;
 
     @Test
@@ -97,40 +103,51 @@ public class PhoneControllerTest {
 
     @Test
     void bookPhone_WhenNotAvailable_ShouldReturnError() {
-        when(phoneService.bookPhone("Phone1", "User1")).thenReturn(Mono.error(new PhoneNotAvailableException("Phone not available")));
+        when(phoneService.bookPhone("Phone1", "User1"))
+                .thenReturn(Mono.error(new PhoneNotAvailableException("Phone not available")));
 
         webTestClient.post().uri("/phones/Phone1/book?bookedBy=User1")
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.BAD_REQUEST)
-                .expectBody()
-                .jsonPath("$.message").isEqualTo("Phone not available");
+                .expectBody(String.class)
+                .consumeWith(response ->
+                        assertEquals("Phone not available", response.getResponseBody())
+                );
 
         verify(phoneService).bookPhone("Phone1", "User1");
     }
 
+
     @Test
     void getPhoneDetailsByName_WhenNotFound_ShouldReturnError() {
-        when(phoneService.getPhoneDetailsByName("Unknown")).thenReturn(Mono.error(new PhoneNotFoundException("Phone not found")));
+        when(phoneService.getPhoneDetailsByName("Unknown"))
+                .thenReturn(Mono.error(new PhoneNotFoundException("Phone not found")));
 
         webTestClient.get().uri("/phones/Unknown")
                 .accept(APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody()
-                .jsonPath("$.message").isEqualTo("Phone not found");
+                .expectBody(String.class)
+                .consumeWith(response ->
+                        assertEquals("Phone not found", response.getResponseBody())
+                );
 
         verify(phoneService).getPhoneDetailsByName("Unknown");
     }
 
+
     @Test
     void returnPhone_WhenNotFound_ShouldReturnError() {
-        when(phoneService.returnPhone("Unknown", "User1")).thenReturn(Mono.error(new PhoneNotFoundException("Phone not found")));
+        when(phoneService.returnPhone("Unknown", "User1"))
+                .thenReturn(Mono.error(new PhoneNotFoundException("Phone not found")));
 
         webTestClient.post().uri("/phones/Unknown/return?returnedBy=User1")
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectBody()
-                .jsonPath("$.message").isEqualTo("Phone not found");
+                .expectBody(String.class)
+                .consumeWith(response ->
+                        assertEquals("Phone not found", response.getResponseBody())
+                );
 
         verify(phoneService).returnPhone("Unknown", "User1");
     }
