@@ -67,11 +67,9 @@ out/
 ehthumbs.db
 Thumbs.db
 
-# Docker
-**/docker-compose*.yml
-Dockerfile
 
-# Other specific files
+
+# Other specific file
 app.log.2023-11-16.0.gz
 mvnw
 mvnw.cmd
