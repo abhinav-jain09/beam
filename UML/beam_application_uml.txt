@@ -1,0 +1,63 @@
+
+@startuml
+package "com.assignment.beam" {
+    class BeamApplication
+
+    package controller {
+        class PhoneController {
+            + getAllPhones()
+            + bookPhone(String, String)
+            + getPhoneDetailsByName(String)
+            + returnPhone(String, String)
+        }
+    }
+
+    package service {
+        class PhoneService {
+            - phoneRepository : PhoneRepository
+            + getAllPhones()
+            + bookPhone(String, String)
+            + getPhoneDetailsByName(String)
+            + returnPhone(String, String)
+        }
+    }
+
+    package repository {
+        interface PhoneRepository {
+            + findAll()
+            + findById(String)
+            + save(Phone)
+            + deleteById(String)
+        }
+    }
+
+    package entity {
+        class Phone {
+            - name : String
+            - isAvailable : boolean
+            - lastBooked : LocalDateTime
+            - lastBookedBy : String
+        }
+    }
+
+    package exceptions {
+        class PhoneNotAvailableException
+        class PhoneNotFoundException
+    }
+
+    package response {
+        class PhoneDetailsResponse {
+            - availability : String
+            - lastBooked : LocalDateTime
+            - lastBookedBy : String
+        }
+    }
+}
+
+PhoneController --> PhoneService
+PhoneService --> PhoneRepository
+PhoneRepository ..> Phone
+PhoneController ..> PhoneDetailsResponse
+PhoneController ..> PhoneNotAvailableException
+PhoneController ..> PhoneNotFoundException
+@enduml
