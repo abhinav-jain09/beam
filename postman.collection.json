@@ -1,0 +1,91 @@
+{
+    "info": {
+        "_postman_id": "your-collection-id",
+        "name": "Phone Service API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Get All Phones",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{host}}/phones",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "phones"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Book a Phone",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                    "raw": "{{host}}/phones/:phoneName/book?bookedBy=:bookedBy",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "phones",
+                        ":phoneName",
+                        "book"
+                    ],
+                    "query": [
+                        {
+                            "key": "bookedBy",
+                            "value": ":bookedBy"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Get Phone Details",
+            "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                    "raw": "{{host}}/phones/:phoneName",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "phones",
+                        ":phoneName"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "Return a Phone",
+            "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                    "raw": "{{host}}/phones/:phoneName/return?returnedBy=:returnedBy",
+                    "host": [
+                        "{{host}}"
+                    ],
+                    "path": [
+                        "phones",
+                        ":phoneName",
+                        "return"
+                    ],
+                    "query": [
+                        {
+                            "key": "returnedBy",
+                            "value": ":returnedBy"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "protocolProfileBehavior": {}
+}
